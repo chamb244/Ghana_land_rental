@@ -9,9 +9,14 @@ ls "/Users/jchamberlin/Library/CloudStorage/OneDrive-CIMMYT/DATA/Ghana/GLSS5-Dat
 cd "/Users/jchamberlin/Library/CloudStorage/OneDrive-CIMMYT/DATA/Ghana/GLSS5-Data/stata/partb"
 use sec8b.dta, clear // cf g7sec8b.dta in wave 7
 
-tab s8bq8
-// 6% plots rented in 
-// 10% plots sharecropped in
+* weights
+lookfor weight
+inspect weight
+
+keep if !missing(s8bq8)   // ADDED: plots with acquisition info (ag households)
+
+tab s8bq8 [aw=weight]     // CHANGED: now weighted
+
 codebook s8bq8
 
 gen plotacq_bought = inlist(s8bq8,1)
@@ -22,21 +27,21 @@ gen plotacq_vilinh = inlist(s8bq8,5,6)
 *gen plotacq_villag = inlist(s8bq8,5) 
 *gen plotacq_inheri = inlist(s8bq8,6)
 
-stop
-collapse (max) plotacq_* (max) farmnum = s8bq3, by(hhid clust)
+collapse (max) plotacq_* (max) farmnum = s8bq3, by(hhid clust weight)
 
-tabstat plotacq_*
-// 8% HHs with land rented in 
-// 13% HHs with land sharecropped in 
+tabstat plotacq_* [aw=weight]
 clonevar rentedin = plotacq_rentin
 clonevar sharedin = plotacq_sharin
 egen shrentin = rowmax(rentedin sharedin)
-tabstat rentedin sharedin shrentin  
+tabstat rentedin sharedin shrentin [aw=weight]
 
 
-stop
 
 use sec8a1.dta, clear // cf g7sec8a1.dta in wave 7
+
+* weights
+lookfor weight
+inspect weight
 
 d s8aq12 s8aq13a s8aq13b s8aq14 s8aq15 s8aq16a s8aq16b
 codebook s8aq12 s8aq13b 
@@ -45,7 +50,6 @@ gen rentedout_ha = s8aq13a * 0.404686 if inlist(s8aq13b,1) // Acres to hectares
 replace rentedout_ha = s8aq13a * 0.044965 if inlist(s8aq13b,2) // Poles to hectares
 replace rentedout_ha = s8aq13a * 0.044965 if inlist(s8aq13b,3) // Ropes to hectares
 replace rentedout_ha = s8aq13a * 0.065032 if inlist(s8aq13b,4) // Plot to hectares
-*replace rentedout_ha = s8aq13a * 1.000000 if inlist(s8aq13b,5) // Hectares
 replace rentedout_ha = s8aq13a * 1.000000 if inlist(s8aq13b,5) // OTHER -- TREATING AS HECTARES BUT MAY BE INCORRECT; ONLY 2 OBS
 
 codebook s8aq15 s8aq16b 
@@ -54,8 +58,7 @@ gen sharedout_ha = s8aq16a * 0.404686 if inlist(s8aq16b,1) // Acres to hectares
 replace sharedout_ha = s8aq16a * 0.044965 if inlist(s8aq16b,2) // Poles to hectares
 replace sharedout_ha = s8aq16a * 0.044965 if inlist(s8aq16b,3) // Ropes to hectares
 replace sharedout_ha = s8aq16a * 0.065032 if inlist(s8aq16b,4) // Plot to hectares
-*replace sharedout_ha = s8aq16a * 1.000000 if inlist(s8aq16b,5) // Hectares
 
-tabstat rentedout rentedout_ha sharedout sharedout_ha
-// rented out 1.9%
-// shared out 5.0%
+egen shrentout = rowmax(rentedout sharedout)                  // ADDED
+tabstat rentedout sharedout shrentout [aw=weight]             // ADDED
+tabstat rentedout_ha sharedout_ha [aw=weight]

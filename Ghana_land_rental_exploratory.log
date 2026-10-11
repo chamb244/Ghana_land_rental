@@ -1,0 +1,1229 @@
+------------------------------------------------------------------------------------------------------------------
+      name:  master
+       log:  /Users/jchamberlin/repos/Ghana_land_rental/Ghana_land_rental_exploratory.log
+  log type:  text
+ opened on:   8 Oct 2026, 13:48:36
+
+. 
+. do "$repo/Ghana_land_rental_exploratory_w5.do"
+
+. /* WAVE 5 */
+. 
+. clear all 
+
+. 
+. set more off
+
+. 
+. ls "/Users/jchamberlin/Library/CloudStorage/OneDrive-CIMMYT/DATA/Ghana/"
+
+total 0
+drwxr-xr-x   2 jchamberlin  staff   64 Sep 27 11:40 analysis/
+drwx------@  5 jchamberlin  staff  160 Sep 14 10:14 G5-price/
+drwxr-xr-x@  5 jchamberlin  staff  160 Sep 27 11:20 GLSS5-Data/
+drwxr-xr-x@  7 jchamberlin  staff  224 Sep 27 11:20 GLSS6_2012-2013/
+drwx------@ 15 jchamberlin  staff  480 Sep 14 10:35 GLSS7stata/
+drwx------@  4 jchamberlin  staff  128 Sep 14 10:29 GLSS7stata-2/
+
+. ls "/Users/jchamberlin/Library/CloudStorage/OneDrive-CIMMYT/DATA/Ghana/GLSS5-Data/stata/partb"
+
+total 523144
+-rw-r--r--@ 1 jchamberlin  staff  21580005 Nov 21  2008 partb.zip
+-rw-r--r--@ 1 jchamberlin  staff    431703 Aug 22  2008 sec11a.dta
+-rw-r--r--@ 1 jchamberlin  staff    403638 Aug 22  2008 sec11b.dta
+-rw-r--r--@ 1 jchamberlin  staff    487231 Aug 22  2008 sec11c.dta
+-rw-r--r--@ 1 jchamberlin  staff    320972 Aug 22  2008 sec11d.dta
+-rw-r--r--@ 1 jchamberlin  staff    292582 Aug 22  2008 sec12a.dta
+-rw-r--r--@ 1 jchamberlin  staff  20127987 Aug 22  2008 sec12b.dta
+-rw-r--r--@ 1 jchamberlin  staff    279614 Aug 22  2008 sec12c.dta
+-rw-r--r--@ 1 jchamberlin  staff    701625 Nov 21  2008 sec8a1.dta
+-rw-r--r--@ 1 jchamberlin  staff   2347222 Aug 22  2008 sec8a2.dta
+-rw-r--r--@ 1 jchamberlin  staff    757374 Aug 22  2008 sec8a3.dta
+-rw-r--r--@ 1 jchamberlin  staff    468810 Aug 22  2008 sec8b.dta
+-rw-r--r--@ 1 jchamberlin  staff    914041 Nov 21  2008 sec8c1.dta
+-rw-r--r--@ 1 jchamberlin  staff   1196068 Aug 22  2008 sec8c2.dta
+-rw-r--r--@ 1 jchamberlin  staff   2586009 Aug 22  2008 sec8d.dta
+-rw-r--r--@ 1 jchamberlin  staff    356268 Aug 22  2008 sec8e.dta
+-rw-r--r--@ 1 jchamberlin  staff   3113163 Aug 22  2008 sec8f.dta
+-rw-r--r--@ 1 jchamberlin  staff     91191 Aug 22  2008 sec8g.dta
+-rw-r--r--@ 1 jchamberlin  staff  25873083 Aug 22  2008 sec8h.dta
+-rw-r--r--@ 1 jchamberlin  staff  88301228 Aug 22  2008 sec9a.dta
+-rw-r--r--@ 1 jchamberlin  staff  90536144 Aug 22  2008 sec9b.dta
+-rw-r--r--@ 1 jchamberlin  staff   1931765 Aug 22  2008 sec9c.dta
+-rw-r--r--@ 1 jchamberlin  staff    289656 Aug 22  2008 secb0.dta
+-rw-r--r--@ 1 jchamberlin  staff   2331831 Aug 22  2008 secb1.dta
+-rw-r--r--@ 1 jchamberlin  staff   2073082 Aug 22  2008 secb2.dta
+
+. cd "/Users/jchamberlin/Library/CloudStorage/OneDrive-CIMMYT/DATA/Ghana/GLSS5-Data/stata/partb"
+/Users/jchamberlin/Library/CloudStorage/OneDrive-CIMMYT/DATA/Ghana/GLSS5-Data/stata/partb
+
+. use sec8b.dta, clear // cf g7sec8b.dta in wave 7
+
+. 
+. * weights
+. lookfor weight
+
+Variable      Storage   Display    Value
+    name         type    format    label      Variable label
+------------------------------------------------------------------------------------------------------------------
+weight          float   %9.0g                 weight
+
+. inspect weight
+
+weight:  weight                                 Number of observations
+---------------                        ---------------------------------------
+                                             Total      Integers   Nonintegers
+|      #                     Negative            -             -             -
+|      #                     Zero                -             -             -
+|  #   #                     Positive       11,471             -        11,471
+|  #   #                               -----------   -----------   -----------
+|  #   #                     Total          11,471             -        11,471
+|  #   #   #   .   .         Missing             -
++----------------------                -----------
+77.31207       2326.009                     11,471
+(More than 99 unique values)
+
+. 
+. keep if !missing(s8bq8)   // ADDED: plots with acquisition info (ag households)
+(11 observations deleted)
+
+. 
+. tab s8bq8 [aw=weight]     // CHANGED: now weighted
+
+        how was land obtained |      Freq.     Percent        Cum.
+------------------------------+-----------------------------------
+                       bought | 456.304121        3.98        3.98
+   rented for cash or in kind | 690.604743        6.03       10.01
+    sharecropped by household |1,333.19128       11.63       21.64
+           use free of charge | 3,224.7637       28.14       49.78
+distributed by village/family | 5,755.1361       50.22      100.00
+------------------------------+-----------------------------------
+                        Total |     11,460      100.00
+
+. 
+. codebook s8bq8
+
+------------------------------------------------------------------------------------------------------------------
+s8bq8                                                                                        how was land obtained
+------------------------------------------------------------------------------------------------------------------
+
+                  Type: Numeric (byte)
+                 Label: s8bq8
+
+                 Range: [1,5]                         Units: 1
+         Unique values: 5                         Missing .: 0/11,460
+
+            Tabulation: Freq.   Numeric  Label
+                          388         1  bought
+                          634         2  rented for cash or in kind
+                        1,144         3  sharecropped by household
+                        3,669         4  use free of charge
+                        5,625         5  distributed by village/family
+
+. 
+. gen plotacq_bought = inlist(s8bq8,1)
+
+. gen plotacq_rentin = inlist(s8bq8,2)
+
+. gen plotacq_sharin = inlist(s8bq8,3)
+
+. gen plotacq_usefre = inlist(s8bq8,4)
+
+. gen plotacq_vilinh = inlist(s8bq8,5,6)
+
+. *gen plotacq_villag = inlist(s8bq8,5) 
+. *gen plotacq_inheri = inlist(s8bq8,6)
+. 
+. collapse (max) plotacq_* (max) farmnum = s8bq3, by(hhid clust weight)
+
+. 
+. tabstat plotacq_* [aw=weight]
+
+   Stats |  plotac~t  plot~tin  plot~rin  plotac~e  plotac~h
+---------+--------------------------------------------------
+    Mean |  .0513688  .0872969  .1557225  .3121708  .5281119
+------------------------------------------------------------
+
+. clonevar rentedin = plotacq_rentin
+
+. clonevar sharedin = plotacq_sharin
+
+. egen shrentin = rowmax(rentedin sharedin)
+
+. tabstat rentedin sharedin shrentin [aw=weight]
+
+   Stats |  rentedin  sharedin  shrentin
+---------+------------------------------
+    Mean |  .0872969  .1557225  .2331213
+----------------------------------------
+
+. 
+. 
+. 
+. use sec8a1.dta, clear // cf g7sec8a1.dta in wave 7
+
+. 
+. * weights
+. lookfor weight
+
+Variable      Storage   Display    Value
+    name         type    format    label      Variable label
+------------------------------------------------------------------------------------------------------------------
+weight          float   %9.0g                 weight
+
+. inspect weight
+
+weight:  weight                                 Number of observations
+---------------                        ---------------------------------------
+                                             Total      Integers   Nonintegers
+|      #                     Negative            -             -             -
+|      #                     Zero                -             -             -
+|      #                     Positive        8,255             -         8,255
+|  #   #                               -----------   -----------   -----------
+|  #   #                     Total           8,255             -         8,255
+|  #   #   .   .   .         Missing             -
++----------------------                -----------
+77.31207       2326.009                      8,255
+(More than 99 unique values)
+
+. 
+. d s8aq12 s8aq13a s8aq13b s8aq14 s8aq15 s8aq16a s8aq16b
+
+Variable      Storage   Display    Value
+    name         type    format    label      Variable label
+------------------------------------------------------------------------------------------------------------------
+s8aq12          byte    %8.0g      s8aq12     land rented out in past 12 months
+s8aq13a         float   %9.0g                 quantity of land rented out
+s8aq13b         byte    %8.0g      s8aq13b    unit of land rented out
+s8aq14          long    %12.0g                value of land rented out
+s8aq15          byte    %8.0g      s8aq15     land given out for sharecropping
+s8aq16a         float   %9.0g                 quantity of land sharecropped
+s8aq16b         byte    %8.0g      s8aq16b    unit of land sharecropped
+
+. codebook s8aq12 s8aq13b 
+
+------------------------------------------------------------------------------------------------------------------
+s8aq12                                                                           land rented out in past 12 months
+------------------------------------------------------------------------------------------------------------------
+
+                  Type: Numeric (byte)
+                 Label: s8aq12
+
+                 Range: [1,2]                         Units: 1
+         Unique values: 2                         Missing .: 4,541/8,255
+
+            Tabulation: Freq.   Numeric  Label
+                           71         1  yes
+                        3,643         2  no
+                        4,541         .  
+
+------------------------------------------------------------------------------------------------------------------
+s8aq13b                                                                                    unit of land rented out
+------------------------------------------------------------------------------------------------------------------
+
+                  Type: Numeric (byte)
+                 Label: s8aq13b
+
+                 Range: [1,5]                         Units: 1
+         Unique values: 5                         Missing .: 8,184/8,255
+
+            Tabulation: Freq.   Numeric  Label
+                           49         1  acres
+                           14         2  poles
+                            5         3  ropes
+                            1         4  plot
+                            2         5  other
+                        8,184         .  
+
+. gen rentedout = inlist(s8aq12,1) if !missing(s8aq12)
+(4,541 missing values generated)
+
+. gen rentedout_ha = s8aq13a * 0.404686 if inlist(s8aq13b,1) // Acres to hectares
+(8,206 missing values generated)
+
+. replace rentedout_ha = s8aq13a * 0.044965 if inlist(s8aq13b,2) // Poles to hectares
+(14 real changes made)
+
+. replace rentedout_ha = s8aq13a * 0.044965 if inlist(s8aq13b,3) // Ropes to hectares
+(5 real changes made)
+
+. replace rentedout_ha = s8aq13a * 0.065032 if inlist(s8aq13b,4) // Plot to hectares
+(1 real change made)
+
+. replace rentedout_ha = s8aq13a * 1.000000 if inlist(s8aq13b,5) // OTHER -- TREATING AS HECTARES BUT MAY BE INCOR
+> RECT; ONLY 2 OBS
+(2 real changes made)
+
+. 
+. codebook s8aq15 s8aq16b 
+
+------------------------------------------------------------------------------------------------------------------
+s8aq15                                                                            land given out for sharecropping
+------------------------------------------------------------------------------------------------------------------
+
+                  Type: Numeric (byte)
+                 Label: s8aq15
+
+                 Range: [1,2]                         Units: 1
+         Unique values: 2                         Missing .: 4,544/8,255
+
+            Tabulation: Freq.   Numeric  Label
+                          195         1  yes
+                        3,516         2  no
+                        4,544         .  
+
+------------------------------------------------------------------------------------------------------------------
+s8aq16b                                                                                  unit of land sharecropped
+------------------------------------------------------------------------------------------------------------------
+
+                  Type: Numeric (byte)
+                 Label: s8aq16b
+
+                 Range: [1,4]                         Units: 1
+         Unique values: 4                         Missing .: 8,059/8,255
+
+            Tabulation: Freq.   Numeric  Label
+                          148         1  acres
+                           35         2  poles
+                           10         3  ropes
+                            3         4  plot
+                        8,059         .  
+
+. gen sharedout = inlist(s8aq15,1) if !missing(s8aq15)
+(4,544 missing values generated)
+
+. gen sharedout_ha = s8aq16a * 0.404686 if inlist(s8aq16b,1) // Acres to hectares
+(8,107 missing values generated)
+
+. replace sharedout_ha = s8aq16a * 0.044965 if inlist(s8aq16b,2) // Poles to hectares
+(35 real changes made)
+
+. replace sharedout_ha = s8aq16a * 0.044965 if inlist(s8aq16b,3) // Ropes to hectares
+(10 real changes made)
+
+. replace sharedout_ha = s8aq16a * 0.065032 if inlist(s8aq16b,4) // Plot to hectares
+(3 real changes made)
+
+. 
+. egen shrentout = rowmax(rentedout sharedout)                  // ADDED
+(4,540 missing values generated)
+
+. tabstat rentedout sharedout shrentout [aw=weight]             // ADDED
+
+   Stats |  rented~t  shared~t  shrent~t
+---------+------------------------------
+    Mean |  .0219834  .0606542  .0785424
+----------------------------------------
+
+. tabstat rentedout_ha sharedout_ha [aw=weight]
+
+   Stats |  rented~a  shared~a
+---------+--------------------
+    Mean |   1.86755  5.726939
+------------------------------
+
+. 
+end of do-file
+
+. do "$repo/Ghana_land_rental_exploratory_w6.do"
+
+. /* WAVE 6 */
+. 
+. clear all 
+
+. 
+. set more off
+
+. 
+. ls "/Users/jchamberlin/Library/CloudStorage/OneDrive-CIMMYT/DATA/Ghana/"
+
+total 0
+drwxr-xr-x   2 jchamberlin  staff   64 Sep 27 11:40 analysis/
+drwx------@  5 jchamberlin  staff  160 Sep 14 10:14 G5-price/
+drwxr-xr-x@  5 jchamberlin  staff  160 Sep 27 11:20 GLSS5-Data/
+drwxr-xr-x@  7 jchamberlin  staff  224 Sep 27 11:20 GLSS6_2012-2013/
+drwx------@ 15 jchamberlin  staff  480 Sep 14 10:35 GLSS7stata/
+drwx------@  4 jchamberlin  staff  128 Sep 14 10:29 GLSS7stata-2/
+
+. ls "/Users/jchamberlin/Library/CloudStorage/OneDrive-CIMMYT/DATA/Ghana/GLSS6_2012-2013"
+
+total 0
+drwxr-xr-x@ 5 jchamberlin  staff  160 Sep 14 10:15 DATA/
+drwxr-xr-x@ 8 jchamberlin  staff  256 Sep 14 10:15 MANUALS/
+drwxr-xr-x@ 9 jchamberlin  staff  288 Sep 14 10:15 QUESTIONNAIRES/
+drwxr-xr-x@ 8 jchamberlin  staff  256 Sep 14 10:15 REPORTS/
+
+. ls "/Users/jchamberlin/Library/CloudStorage/OneDrive-CIMMYT/DATA/Ghana/GLSS6_2012-2013/DATA/STATA/STATA/PARTB"
+
+total 825968
+-rw-rw-r--@ 1 jchamberlin  staff     853802 Sep 29  2014 sec11a.dta
+-rw-rw-r--@ 1 jchamberlin  staff     793919 Sep 29  2014 sec11b.dta
+-rw-rw-r--@ 1 jchamberlin  staff    1319748 Sep 29  2014 sec11c.dta
+-rw-rw-r--@ 1 jchamberlin  staff     706221 Sep 29  2014 sec11d.dta
+-rw-rw-r--@ 1 jchamberlin  staff     538768 Sep 29  2014 sec11ea.dta
+-rw-rw-r--@ 1 jchamberlin  staff     857455 Sep 29  2014 sec11eb1.dta
+-rw-rw-r--@ 1 jchamberlin  staff    1322108 Sep 29  2014 sec11eb2.dta
+-rw-rw-r--@ 1 jchamberlin  staff    1363628 Sep 29  2014 sec11ec.dta
+-rw-rw-r--@ 1 jchamberlin  staff    4510257 Sep 29  2014 sec12a.dta
+-rw-rw-r--@ 1 jchamberlin  staff   57346043 Sep 29  2014 sec12b.dta
+-rw-rw-r--@ 1 jchamberlin  staff     869288 Sep 29  2014 sec12c.dta
+-rw-rw-r--@ 1 jchamberlin  staff    1484981 Sep 29  2014 sec8a1.dta
+-rw-rw-r--@ 1 jchamberlin  staff    8256775 Sep 29  2014 sec8a2.dta
+-rw-rw-r--@ 1 jchamberlin  staff    2214453 Sep 29  2014 sec8a3.dta
+-rw-rw-r--@ 1 jchamberlin  staff    1304648 Sep 29  2014 sec8b.dta
+-rw-rw-r--@ 1 jchamberlin  staff    1653022 Sep 29  2014 sec8c1.dta
+-rw-rw-r--@ 1 jchamberlin  staff    1386675 Sep 29  2014 sec8c2.dta
+-rw-rw-r--@ 1 jchamberlin  staff    5337629 Sep 29  2014 sec8d.dta
+-rw-rw-r--@ 1 jchamberlin  staff     773795 Sep 29  2014 sec8e.dta
+-rw-rw-r--@ 1 jchamberlin  staff   11647957 Sep 29  2014 sec8f.dta
+-rw-rw-r--@ 1 jchamberlin  staff    1138779 Sep 29  2014 sec8g.dta
+-rw-rw-r--@ 1 jchamberlin  staff   48593321 Sep 29  2014 sec8h.dta
+-rw-rw-r--@ 1 jchamberlin  staff  143143706 Sep 29  2014 sec9a.dta
+-rw-rw-r--@ 1 jchamberlin  staff  114056394 Sep 29  2014 sec9b.dta
+-rw-rw-r--@ 1 jchamberlin  staff    4278183 Sep 29  2014 sec9c.dta
+-rw-rw-r--@ 1 jchamberlin  staff     388185 Sep 29  2014 secb0.dta
+-rw-rw-r--@ 1 jchamberlin  staff    3290102 Sep 29  2014 secb1.dta
+-rw-rw-r--@ 1 jchamberlin  staff    3408034 Sep 29  2014 secb2.dta
+
+. cd "/Users/jchamberlin/Library/CloudStorage/OneDrive-CIMMYT/DATA/Ghana/GLSS6_2012-2013/DATA/STATA/STATA/PARTB"
+/Users/jchamberlin/Library/CloudStorage/OneDrive-CIMMYT/DATA/Ghana/GLSS6_2012-2013/DATA/STATA/STATA/PARTB
+
+. use sec8b.dta, clear // cf g7sec8b.dta in wave 7
+
+. 
+. * weights are in PARTA/g6loc_edt.dta
+. describe using "/Users/jchamberlin/Library/CloudStorage/OneDrive-CIMMYT/DATA/Ghana/GLSS6_2012-2013/DATA/STATA/ST
+> ATA/PARTA/g6loc_edt.dta"
+
+Contains data                                 
+ Observations:        16,772                  29 Sep 2014 15:38
+    Variables:            13                  
+------------------------------------------------------------------------------------------------------------------
+Variable      Storage   Display    Value
+    name         type    format    label      Variable label
+------------------------------------------------------------------------------------------------------------------
+clust           long    %10.0g                ENUMERATION AREA
+nh              byte    %10.0g                HOUSEHOLD NUMBER
+HID             str8    %9s                   
+hhsize          byte    %8.0g                 (sum) s1q24
+region          byte    %13.0g     REGION     REGION
+district        byte    %8.0g                 DISTRICT
+loc2            byte    %8.0g      URBRUR     URBAN/RURAL
+ez              byte    %8.0g      EZ         ECOLOGICAL ZONE
+loc5            byte    %14.0g     loc5       
+loc7            byte    %14.0g     loc7       
+month           byte    %9.0g                 
+year            int     %9.0g                 
+weight          float   %8.0g                 weight
+------------------------------------------------------------------------------------------------------------------
+Sorted by: clust  
+
+. 
+. clonevar HID=hid
+
+. 
+. merge m:1 clust HID using "/Users/jchamberlin/Library/CloudStorage/OneDrive-CIMMYT/DATA/Ghana/GLSS6_2012-2013/DA
+> TA/STATA/STATA/PARTA/g6loc_edt.dta", keepusing(weight) keep(master match)
+
+    Result                      Number of obs
+    -----------------------------------------
+    Not matched                             0
+    Matched                            28,771  (_merge==3)
+    -----------------------------------------
+
+. tab _merge             // all should be 3 (matched)
+
+   Matching result from |
+                  merge |      Freq.     Percent        Cum.
+------------------------+-----------------------------------
+            Matched (3) |     28,771      100.00      100.00
+------------------------+-----------------------------------
+                  Total |     28,771      100.00
+
+. drop _merge
+
+. 
+. inspect weight
+
+weight:  weight                                 Number of observations
+---------------                        ---------------------------------------
+                                             Total      Integers   Nonintegers
+|  #                         Negative            -             -             -
+|  #                         Zero                -             -             -
+|  #                         Positive       28,771            17        28,754
+|  #                                   -----------   -----------   -----------
+|  #                         Total          28,771            17        28,754
+|  #   .   .   .   .         Missing             -
++----------------------                -----------
+31.6552        3476.264                     28,771
+(More than 99 unique values)
+
+. 
+. keep if !missing(s8bq8)   // plots with acquisition info (ag households)
+(7,411 observations deleted)
+
+. 
+. tab s8bq8 [aw=weight]
+
+       how was land obtained? |      Freq.     Percent        Cum.
+------------------------------+-----------------------------------
+                       bought | 736.312313        3.45        3.45
+   rented for cash or in kind | 1,221.9475        5.72        9.17
+    sharecropped by household | 2,310.4241       10.82       19.98
+           use free of charge | 4,437.2589       20.77       40.76
+distributed by village/family | 12,654.057       59.24      100.00
+------------------------------+-----------------------------------
+                        Total |     21,360      100.00
+
+. 
+. codebook s8bq8
+
+------------------------------------------------------------------------------------------------------------------
+s8bq8                                                                                       how was land obtained?
+------------------------------------------------------------------------------------------------------------------
+
+                  Type: Numeric (byte)
+                 Label: s8bq8
+
+                 Range: [1,5]                         Units: 1
+         Unique values: 5                         Missing .: 0/21,360
+
+            Tabulation: Freq.   Numeric  Label
+                          665         1  bought
+                        1,131         2  rented for cash or in kind
+                        1,806         3  sharecropped by household
+                        4,428         4  use free of charge
+                       13,330         5  distributed by village/family
+
+. 
+. gen plotacq_bought = inlist(s8bq8,1)
+
+. gen plotacq_rentin = inlist(s8bq8,2)
+
+. gen plotacq_sharin = inlist(s8bq8,3)
+
+. gen plotacq_usefre = inlist(s8bq8,4)
+
+. gen plotacq_vilinh = inlist(s8bq8,5,6)
+
+. *gen plotacq_villag = inlist(s8bq8,5) 
+. *gen plotacq_inheri = inlist(s8bq8,6)
+. 
+. collapse (max) plotacq_* (max) farmnum = s8bq3, by(hid clust weight)
+
+. 
+. tabstat plotacq_* [aw=weight]
+
+   Stats |  plotac~t  plot~tin  plot~rin  plotac~e  plotac~h
+---------+--------------------------------------------------
+    Mean |  .0508123  .0755125  .1590809  .2414457   .610243
+------------------------------------------------------------
+
+. clonevar rentedin = plotacq_rentin
+
+. clonevar sharedin = plotacq_sharin
+
+. egen shrentin = rowmax(rentedin sharedin)
+
+. tabstat rentedin sharedin shrentin [aw=weight]
+
+   Stats |  rentedin  sharedin  shrentin
+---------+------------------------------
+    Mean |  .0755125  .1590809  .2269041
+----------------------------------------
+
+. 
+. 
+. 
+. use sec8a1.dta, clear // cf g7sec8a1.dta in wave 7
+
+. 
+. * weights are in PARTA/g6loc_edt.dta
+. clonevar HID=hid
+
+. 
+. merge m:1 clust HID using "/Users/jchamberlin/Library/CloudStorage/OneDrive-CIMMYT/DATA/Ghana/GLSS6_2012-2013/DA
+> TA/STATA/STATA/PARTA/g6loc_edt.dta", keepusing(weight) keep(master match)
+
+    Result                      Number of obs
+    -----------------------------------------
+    Not matched                             0
+    Matched                            16,772  (_merge==3)
+    -----------------------------------------
+
+. tab _merge             // all should be 3 (matched)
+
+   Matching result from |
+                  merge |      Freq.     Percent        Cum.
+------------------------+-----------------------------------
+            Matched (3) |     16,772      100.00      100.00
+------------------------+-----------------------------------
+                  Total |     16,772      100.00
+
+. drop _merge
+
+. 
+. inspect weight
+
+weight:  weight                                 Number of observations
+---------------                        ---------------------------------------
+                                             Total      Integers   Nonintegers
+|  #                         Negative            -             -             -
+|  #                         Zero                -             -             -
+|  #                         Positive       16,772            13        16,759
+|  #                                   -----------   -----------   -----------
+|  #                         Total          16,772            13        16,759
+|  #   .   .   .   .         Missing             -
++----------------------                -----------
+31.6552        3476.264                     16,772
+(More than 99 unique values)
+
+. 
+. d s8aq12 s8aq13a s8aq13b s8aq14 s8aq15 s8aq16a s8aq16b
+
+Variable      Storage   Display    Value
+    name         type    format    label      Variable label
+------------------------------------------------------------------------------------------------------------------
+s8aq12          byte    %8.0g      s8aq12     was any land rented out in past 12 months?
+s8aq13a         float   %9.0g                 quantity of land rented out
+s8aq13b         byte    %8.0g      s8aq13b    unit of land rented out
+s8aq14          long    %12.0g                value of land rented out
+s8aq15          byte    %8.0g      s8aq15     was any land given out for sharecropping in the past 12 months?
+s8aq16a         float   %9.0g                 quantity of land sharecropped
+s8aq16b         byte    %8.0g      s8aq16b    unit of land sharecropped
+
+. codebook s8aq12 s8aq13b 
+
+------------------------------------------------------------------------------------------------------------------
+s8aq12                                                                  was any land rented out in past 12 months?
+------------------------------------------------------------------------------------------------------------------
+
+                  Type: Numeric (byte)
+                 Label: s8aq12
+
+                 Range: [1,2]                         Units: 1
+         Unique values: 2                         Missing .: 10,177/16,772
+
+            Tabulation: Freq.   Numeric  Label
+                          113         1  yes
+                        6,482         2  no
+                       10,177         .  
+
+------------------------------------------------------------------------------------------------------------------
+s8aq13b                                                                                    unit of land rented out
+------------------------------------------------------------------------------------------------------------------
+
+                  Type: Numeric (byte)
+                 Label: s8aq13b
+
+                 Range: [1,5]                         Units: 1
+         Unique values: 5                         Missing .: 16,659/16,772
+
+            Tabulation: Freq.   Numeric  Label
+                           99         1  acres
+                            5         2  poles
+                            4         3  ropes
+                            4         4  plot
+                            1         5  hectares
+                       16,659         .  
+
+. gen rentedout = inlist(s8aq12,1) if !missing(s8aq12)
+(10,177 missing values generated)
+
+. gen rentedout_ha = s8aq13a * 0.404686 if inlist(s8aq13b,1) // Acres to hectares
+(16,673 missing values generated)
+
+. replace rentedout_ha = s8aq13a * 0.044965 if inlist(s8aq13b,2) // Poles to hectares
+(5 real changes made)
+
+. replace rentedout_ha = s8aq13a * 0.044965 if inlist(s8aq13b,3) // Ropes to hectares
+(4 real changes made)
+
+. replace rentedout_ha = s8aq13a * 0.065032 if inlist(s8aq13b,4) // Plot to hectares
+(4 real changes made)
+
+. replace rentedout_ha = s8aq13a * 1.000000 if inlist(s8aq13b,5) // Hectares
+(1 real change made)
+
+. 
+. codebook s8aq15 s8aq16b 
+
+------------------------------------------------------------------------------------------------------------------
+s8aq15                                             was any land given out for sharecropping in the past 12 months?
+------------------------------------------------------------------------------------------------------------------
+
+                  Type: Numeric (byte)
+                 Label: s8aq15
+
+                 Range: [1,2]                         Units: 1
+         Unique values: 2                         Missing .: 10,176/16,772
+
+            Tabulation: Freq.   Numeric  Label
+                          474         1  yes
+                        6,122         2  no
+                       10,176         .  
+
+------------------------------------------------------------------------------------------------------------------
+s8aq16b                                                                                  unit of land sharecropped
+------------------------------------------------------------------------------------------------------------------
+
+                  Type: Numeric (byte)
+                 Label: s8aq16b
+
+                 Range: [1,5]                         Units: 1
+         Unique values: 5                         Missing .: 16,298/16,772
+
+            Tabulation: Freq.   Numeric  Label
+                          398         1  acres
+                           42         2  poles
+                           24         3  ropes
+                            7         4  plot
+                            3         5  hectares
+                       16,298         .  
+
+. gen sharedout = inlist(s8aq15,1) if !missing(s8aq15)
+(10,176 missing values generated)
+
+. gen sharedout_ha = s8aq16a * 0.404686 if inlist(s8aq16b,1) // Acres to hectares
+(16,374 missing values generated)
+
+. replace sharedout_ha = s8aq16a * 0.044965 if inlist(s8aq16b,2) // Poles to hectares
+(42 real changes made)
+
+. replace sharedout_ha = s8aq16a * 0.044965 if inlist(s8aq16b,3) // Ropes to hectares
+(24 real changes made)
+
+. replace sharedout_ha = s8aq16a * 0.065032 if inlist(s8aq16b,4) // Plot to hectares
+(7 real changes made)
+
+. replace sharedout_ha = s8aq16a * 1.000000 if inlist(s8aq16b,5) // Hectares
+(3 real changes made)
+
+. 
+. egen shrentout = rowmax(rentedout sharedout)
+(10,176 missing values generated)
+
+. tabstat rentedout sharedout shrentout [aw=weight]
+
+   Stats |  rented~t  shared~t  shrent~t
+---------+------------------------------
+    Mean |  .0199239  .0941985  .1079059
+----------------------------------------
+
+. 
+end of do-file
+
+. do "$repo/Ghana_land_rental_exploratory_w7.do"
+
+. /* WAVE 7 */
+. 
+. clear all 
+
+. 
+. set more off
+
+. 
+. cd "/Users/jchamberlin/Library/CloudStorage/OneDrive-CIMMYT/DATA/Ghana/GLSS7stata/g7PartB/"
+/Users/jchamberlin/Library/CloudStorage/OneDrive-CIMMYT/DATA/Ghana/GLSS7stata/g7PartB
+
+. ls 
+
+total 8945072
+-rw-r--r--  1 jchamberlin  staff     2632796 Sep 17  2018 g7sec10a.dta
+-rw-r--r--  1 jchamberlin  staff      874337 Sep 17  2018 g7sec10b.dta
+-rw-r--r--  1 jchamberlin  staff     8212630 Sep 17  2018 g7sec10c.dta
+-rw-r--r--  1 jchamberlin  staff      665147 Dec 15  2017 g7sec10d_1I 2I AND 3.dta
+-rw-r--r--  1 jchamberlin  staff      656267 Sep 21  2018 g7sec10d_1i.dta
+-rw-r--r--  1 jchamberlin  staff      245998 Sep 21  2018 g7sec10d_1II AND 2II.dta
+-rw-r--r--  1 jchamberlin  staff      226575 Sep 21  2018 g7sec10d_1ii.dta
+-rw-r--r--  1 jchamberlin  staff     2327711 Sep 21  2018 g7sec10d4.dta
+-rw-r--r--  1 jchamberlin  staff      937634 Sep 21  2018 g7sec10d5.dta
+-rw-r--r--  1 jchamberlin  staff      122152 Sep 21  2018 g7sec10d6i.dta
+-rw-r--r--  1 jchamberlin  staff      623253 Sep 21  2018 g7sec10d6ii.dta
+-rw-r--r--  1 jchamberlin  staff      659923 Sep 21  2018 g7sec10e.dta
+-rw-r--r--  1 jchamberlin  staff    10414221 Sep 21  2018 g7sec10e1.dta
+-rw-r--r--  1 jchamberlin  staff    21074979 Sep 21  2018 g7sec10f.dta
+-rw-r--r--  1 jchamberlin  staff    22139252 Sep 21  2018 g7sec10g.dta
+-rw-r--r--  1 jchamberlin  staff      871470 Sep 21  2018 g7sec10h.dta
+-rw-r--r--  1 jchamberlin  staff      921173 Sep 21  2018 g7sec11_12screening.dta
+-rw-r--r--  1 jchamberlin  staff     2228462 Sep 15  2018 g7sec11a.dta
+-rw-r--r--  1 jchamberlin  staff      722296 Sep 15  2018 g7sec11b.dta
+-rw-r--r--  1 jchamberlin  staff     2224560 Feb  1  2019 g7sec11c.dta
+-rw-r--r--  1 jchamberlin  staff      891186 Sep 15  2018 g7sec11d.dta
+-rw-r--r--  1 jchamberlin  staff       73674 Sep 21  2018 g7sec11ea.dta
+-rw-r--r--  1 jchamberlin  staff      604972 Sep 21  2018 g7sec11eb.dta
+-rw-r--r--  1 jchamberlin  staff      323377 Sep 21  2018 g7sec11ebq22.dta
+-rw-r--r--  1 jchamberlin  staff       64891 Sep 21  2018 g7sec11ebq2429.dta
+-rw-r--r--  1 jchamberlin  staff    20520919 Sep 15  2018 g7sec12a.dta
+-rw-r--r--  1 jchamberlin  staff   112242542 Sep 15  2018 g7sec12b.dta
+-rw-r--r--  1 jchamberlin  staff     1028168 Oct 29  2019 g7sec12c.dta
+-rw-r--r--  1 jchamberlin  staff    15650844 Sep 15  2018 g7sec13.dta
+-rw-r--r--  1 jchamberlin  staff     4678815 Sep 15  2018 g7sec8a1.dta
+-rw-r--r--  1 jchamberlin  staff    16721971 Sep 15  2018 g7sec8a2.dta
+-rw-r--r--  1 jchamberlin  staff     8886005 Sep 15  2018 g7sec8a3.dta
+-rw-r--r--@ 1 jchamberlin  staff     1797701 Sep 15  2018 g7sec8b.dta
+-rw-r--r--  1 jchamberlin  staff     8238791 Sep 15  2018 g7sec8c1.dta
+-rw-r--r--  1 jchamberlin  staff     4221422 Sep 15  2018 g7sec8c2.dta
+-rw-r--r--  1 jchamberlin  staff    12766003 Sep 15  2018 g7sec8d.dta
+-rw-r--r--  1 jchamberlin  staff     1518190 Sep 15  2018 g7sec8e.dta
+-rw-r--r--  1 jchamberlin  staff    12295511 Sep 15  2018 g7sec8f.dta
+-rw-r--r--  1 jchamberlin  staff     4305413 Sep 15  2018 g7sec8g.dta
+-rw-r--r--  1 jchamberlin  staff    99078499 Sep 15  2018 g7sec8h.dta
+-rw-r--r--  1 jchamberlin  staff   955515953 Sep 15  2018 g7sec9a.dta
+-rw-r--r--  1 jchamberlin  staff  3219126801 Sep 15  2018 g7sec9b.dta
+-rw-r--r--  1 jchamberlin  staff      453842 Sep 15  2018 g7sec9c.dta
+
+. use g7sec8b.dta, clear
+
+. 
+. * weights
+. lookfor weight
+
+Variable      Storage   Display    Value
+    name         type    format    label      Variable label
+------------------------------------------------------------------------------------------------------------------
+WTA_S           double  %10.0g                weight
+
+. inspect WTA_S
+
+WTA_S:  weight                                  Number of observations
+--------------                         ---------------------------------------
+                                             Total      Integers   Nonintegers
+|  #                         Negative            -             -             -
+|  #                         Zero                -             -             -
+|  #                         Positive       17,741             -        17,741
+|  #                                   -----------   -----------   -----------
+|  #                         Total          17,741             -        17,741
+|  #   .   .   .   .         Missing             -
++----------------------                -----------
+21.81697       6614.401                     17,741
+(More than 99 unique values)
+
+. 
+. keep if !missing(s8bq8)
+(6,534 observations deleted)
+
+. 
+. tab s8bq8 [aw=WTA_S]
+
+    How did holder obtain the |
+                         land |      Freq.     Percent        Cum.
+------------------------------+-----------------------------------
+                       Bought | 404.339212        3.61        3.61
+   Rented for cash or in kind | 1,104.8576        9.86       13.47
+    Sharecropped by household | 1,696.4928       15.14       28.60
+           Use free of charge |1,828.33128       16.31       44.92
+Distributed by village/family |  1,890.434       16.87       61.79
+                    Inherited | 4,282.5451       38.21      100.00
+------------------------------+-----------------------------------
+                        Total |     11,207      100.00
+
+. // 10% plots rented in 
+. // 15% plots sharecropped in
+. 
+. 
+. codebook s8bq8
+
+------------------------------------------------------------------------------------------------------------------
+s8bq8                                                                               How did holder obtain the land
+------------------------------------------------------------------------------------------------------------------
+
+                  Type: Numeric (byte)
+                 Label: S8BQ8
+
+                 Range: [1,6]                         Units: 1
+         Unique values: 6                         Missing .: 0/11,207
+
+            Tabulation: Freq.   Numeric  Label
+                          296         1  Bought
+                          713         2  Rented for cash or in kind
+                        1,450         3  Sharecropped by household
+                        2,012         4  Use free of charge
+                        2,037         5  Distributed by village/family
+                        4,699         6  Inherited
+
+. 
+. gen plotacq_bought = inlist(s8bq8,1)
+
+. gen plotacq_rentin = inlist(s8bq8,2)
+
+. gen plotacq_sharin = inlist(s8bq8,3)
+
+. gen plotacq_usefre = inlist(s8bq8,4)
+
+. gen plotacq_vilinh = inlist(s8bq8,5,6)
+
+. *gen plotacq_villag = inlist(s8bq8,5) 
+. *gen plotacq_inheri = inlist(s8bq8,6)
+. 
+. collapse (max) plotacq_* (max) farmnum = s8bq3, by(hid clust WTA_S)
+
+. 
+. tabstat plotacq_* [aw=WTA_S]
+
+   Stats |  plotac~t  plot~tin  plot~rin  plotac~e  plotac~h
+---------+--------------------------------------------------
+    Mean |  .0458951  .0975057  .1613024  .1912119  .6081616
+------------------------------------------------------------
+
+. // 4% HHs with land rented in 
+. // 7% HHs with land sharecropped in 
+. clonevar rentedin = plotacq_rentin
+
+. clonevar sharedin = plotacq_sharin
+
+. egen shrentin = rowmax(rentedin sharedin)
+
+. 
+. tabstat rentedin sharedin shrentin [aw=WTA_S]
+
+   Stats |  rentedin  sharedin  shrentin
+---------+------------------------------
+    Mean |  .0975057  .1613024  .2515382
+----------------------------------------
+
+. 
+. 
+. 
+. /* must use another file for rented / shared out, which is only available ag HH-level */
+. use g7sec8a1.dta, clear/* WAVE 7 */
+
+. 
+. clear all 
+
+. 
+. set more off
+
+. 
+. cd "/Users/jchamberlin/Library/CloudStorage/OneDrive-CIMMYT/DATA/Ghana/GLSS7stata/g7PartB/"
+/Users/jchamberlin/Library/CloudStorage/OneDrive-CIMMYT/DATA/Ghana/GLSS7stata/g7PartB
+
+. ls 
+
+total 8945072
+-rw-r--r--  1 jchamberlin  staff     2632796 Sep 17  2018 g7sec10a.dta
+-rw-r--r--  1 jchamberlin  staff      874337 Sep 17  2018 g7sec10b.dta
+-rw-r--r--  1 jchamberlin  staff     8212630 Sep 17  2018 g7sec10c.dta
+-rw-r--r--  1 jchamberlin  staff      665147 Dec 15  2017 g7sec10d_1I 2I AND 3.dta
+-rw-r--r--  1 jchamberlin  staff      656267 Sep 21  2018 g7sec10d_1i.dta
+-rw-r--r--  1 jchamberlin  staff      245998 Sep 21  2018 g7sec10d_1II AND 2II.dta
+-rw-r--r--  1 jchamberlin  staff      226575 Sep 21  2018 g7sec10d_1ii.dta
+-rw-r--r--  1 jchamberlin  staff     2327711 Sep 21  2018 g7sec10d4.dta
+-rw-r--r--  1 jchamberlin  staff      937634 Sep 21  2018 g7sec10d5.dta
+-rw-r--r--  1 jchamberlin  staff      122152 Sep 21  2018 g7sec10d6i.dta
+-rw-r--r--  1 jchamberlin  staff      623253 Sep 21  2018 g7sec10d6ii.dta
+-rw-r--r--  1 jchamberlin  staff      659923 Sep 21  2018 g7sec10e.dta
+-rw-r--r--  1 jchamberlin  staff    10414221 Sep 21  2018 g7sec10e1.dta
+-rw-r--r--  1 jchamberlin  staff    21074979 Sep 21  2018 g7sec10f.dta
+-rw-r--r--  1 jchamberlin  staff    22139252 Sep 21  2018 g7sec10g.dta
+-rw-r--r--  1 jchamberlin  staff      871470 Sep 21  2018 g7sec10h.dta
+-rw-r--r--  1 jchamberlin  staff      921173 Sep 21  2018 g7sec11_12screening.dta
+-rw-r--r--  1 jchamberlin  staff     2228462 Sep 15  2018 g7sec11a.dta
+-rw-r--r--  1 jchamberlin  staff      722296 Sep 15  2018 g7sec11b.dta
+-rw-r--r--  1 jchamberlin  staff     2224560 Feb  1  2019 g7sec11c.dta
+-rw-r--r--  1 jchamberlin  staff      891186 Sep 15  2018 g7sec11d.dta
+-rw-r--r--  1 jchamberlin  staff       73674 Sep 21  2018 g7sec11ea.dta
+-rw-r--r--  1 jchamberlin  staff      604972 Sep 21  2018 g7sec11eb.dta
+-rw-r--r--  1 jchamberlin  staff      323377 Sep 21  2018 g7sec11ebq22.dta
+-rw-r--r--  1 jchamberlin  staff       64891 Sep 21  2018 g7sec11ebq2429.dta
+-rw-r--r--  1 jchamberlin  staff    20520919 Sep 15  2018 g7sec12a.dta
+-rw-r--r--  1 jchamberlin  staff   112242542 Sep 15  2018 g7sec12b.dta
+-rw-r--r--  1 jchamberlin  staff     1028168 Oct 29  2019 g7sec12c.dta
+-rw-r--r--  1 jchamberlin  staff    15650844 Sep 15  2018 g7sec13.dta
+-rw-r--r--  1 jchamberlin  staff     4678815 Sep 15  2018 g7sec8a1.dta
+-rw-r--r--  1 jchamberlin  staff    16721971 Sep 15  2018 g7sec8a2.dta
+-rw-r--r--  1 jchamberlin  staff     8886005 Sep 15  2018 g7sec8a3.dta
+-rw-r--r--@ 1 jchamberlin  staff     1797701 Sep 15  2018 g7sec8b.dta
+-rw-r--r--  1 jchamberlin  staff     8238791 Sep 15  2018 g7sec8c1.dta
+-rw-r--r--  1 jchamberlin  staff     4221422 Sep 15  2018 g7sec8c2.dta
+-rw-r--r--  1 jchamberlin  staff    12766003 Sep 15  2018 g7sec8d.dta
+-rw-r--r--  1 jchamberlin  staff     1518190 Sep 15  2018 g7sec8e.dta
+-rw-r--r--  1 jchamberlin  staff    12295511 Sep 15  2018 g7sec8f.dta
+-rw-r--r--  1 jchamberlin  staff     4305413 Sep 15  2018 g7sec8g.dta
+-rw-r--r--  1 jchamberlin  staff    99078499 Sep 15  2018 g7sec8h.dta
+-rw-r--r--  1 jchamberlin  staff   955515953 Sep 15  2018 g7sec9a.dta
+-rw-r--r--  1 jchamberlin  staff  3219126801 Sep 15  2018 g7sec9b.dta
+-rw-r--r--  1 jchamberlin  staff      453842 Sep 15  2018 g7sec9c.dta
+
+. use g7sec8b.dta, clear
+
+. 
+. * weights
+. lookfor weight
+
+Variable      Storage   Display    Value
+    name         type    format    label      Variable label
+------------------------------------------------------------------------------------------------------------------
+WTA_S           double  %10.0g                weight
+
+. inspect WTA_S
+
+WTA_S:  weight                                  Number of observations
+--------------                         ---------------------------------------
+                                             Total      Integers   Nonintegers
+|  #                         Negative            -             -             -
+|  #                         Zero                -             -             -
+|  #                         Positive       17,741             -        17,741
+|  #                                   -----------   -----------   -----------
+|  #                         Total          17,741             -        17,741
+|  #   .   .   .   .         Missing             -
++----------------------                -----------
+21.81697       6614.401                     17,741
+(More than 99 unique values)
+
+. 
+. 
+. tab s8bq8 [aw=WTA_S]
+
+    How did holder obtain the |
+                         land |      Freq.     Percent        Cum.
+------------------------------+-----------------------------------
+                       Bought | 404.339212        3.61        3.61
+   Rented for cash or in kind | 1,104.8576        9.86       13.47
+    Sharecropped by household | 1,696.4928       15.14       28.60
+           Use free of charge |1,828.33128       16.31       44.92
+Distributed by village/family |  1,890.434       16.87       61.79
+                    Inherited | 4,282.5451       38.21      100.00
+------------------------------+-----------------------------------
+                        Total |     11,207      100.00
+
+. // 10% plots rented in 
+. // 15% plots sharecropped in
+. 
+. 
+. codebook s8bq8
+
+------------------------------------------------------------------------------------------------------------------
+s8bq8                                                                               How did holder obtain the land
+------------------------------------------------------------------------------------------------------------------
+
+                  Type: Numeric (byte)
+                 Label: S8BQ8
+
+                 Range: [1,6]                         Units: 1
+         Unique values: 6                         Missing .: 6,534/17,741
+
+            Tabulation: Freq.   Numeric  Label
+                          296         1  Bought
+                          713         2  Rented for cash or in kind
+                        1,450         3  Sharecropped by household
+                        2,012         4  Use free of charge
+                        2,037         5  Distributed by village/family
+                        4,699         6  Inherited
+                        6,534         .  
+
+. 
+. gen plotacq_bought = inlist(s8bq8,1)
+
+. gen plotacq_rentin = inlist(s8bq8,2)
+
+. gen plotacq_sharin = inlist(s8bq8,3)
+
+. gen plotacq_usefre = inlist(s8bq8,4)
+
+. gen plotacq_vilinh = inlist(s8bq8,5,6)
+
+. *gen plotacq_villag = inlist(s8bq8,5) 
+. *gen plotacq_inheri = inlist(s8bq8,6)
+. 
+. collapse (max) plotacq_* (max) farmnum = s8bq3, by(hid clust WTA_S)
+
+. 
+. tabstat plotacq_* [aw=WTA_S]
+
+   Stats |  plotac~t  plot~tin  plot~rin  plotac~e  plotac~h
+---------+--------------------------------------------------
+    Mean |  .0185762  .0394658  .0652877  .0773936  .2461554
+------------------------------------------------------------
+
+. // 4% HHs with land rented in 
+. // 7% HHs with land sharecropped in 
+. clonevar rentedin = plotacq_rentin
+
+. clonevar sharedin = plotacq_sharin
+
+. egen shrentin = rowmax(rentedin sharedin)
+
+. 
+. tabstat rentedin sharedin shrentin [aw=WTA_S]
+
+   Stats |  rentedin  sharedin  shrentin
+---------+------------------------------
+    Mean |  .0394658  .0652877  .1018109
+----------------------------------------
+
+. 
+. 
+. 
+. /* must use another file for rented / shared out, which is only available ag HH-level */
+. use g7sec8a1.dta, clear
+
+. 
+. * weights
+. lookfor weight
+
+Variable      Storage   Display    Value
+    name         type    format    label      Variable label
+------------------------------------------------------------------------------------------------------------------
+WTA_S           double  %10.0g                weight
+
+. inspect WTA_S
+
+WTA_S:  weight                                  Number of observations
+--------------                         ---------------------------------------
+                                             Total      Integers   Nonintegers
+|  #                         Negative            -             -             -
+|  #                         Zero                -             -             -
+|  #                         Positive       14,009             -        14,009
+|  #                                   -----------   -----------   -----------
+|  #                         Total          14,009             -        14,009
+|  #   .   .   .   .         Missing             -
++----------------------                -----------
+21.81697       6614.401                     14,009
+(More than 99 unique values)
+
+. 
+. d s8aq12 s8aq13a s8aq13b s8aq14 s8aq15 s8aq16a s8aq16b
+
+Variable      Storage   Display    Value
+    name         type    format    label      Variable label
+------------------------------------------------------------------------------------------------------------------
+s8aq12          byte    %8.0g      S8AQ12     Was any agricultural land rented out in past 12 months?
+s8aq13a         float   %9.0g                 Quantity of land rented out
+s8aq13b         byte    %8.0g      S8AQ13B    Unit of land rented out
+s8aq14          double  %10.0g                Value of land rented out
+s8aq15          byte    %8.0g      S8AQ15     Was any agricultural land given out for sharecropping in the past 12
+                                                months?
+s8aq16a         float   %9.0g                 Quantity of land sharecropped
+s8aq16b         byte    %8.0g      S8AQ16B    Unit of land sharecropped
+
+. codebook s8aq12 s8aq13b 
+
+------------------------------------------------------------------------------------------------------------------
+s8aq12                                                     Was any agricultural land rented out in past 12 months?
+------------------------------------------------------------------------------------------------------------------
+
+                  Type: Numeric (byte)
+                 Label: S8AQ12
+
+                 Range: [1,2]                         Units: 1
+         Unique values: 2                         Missing .: 8,165/14,009
+
+            Tabulation: Freq.   Numeric  Label
+                           75         1  Yes
+                        5,769         2  No
+                        8,165         .  
+
+------------------------------------------------------------------------------------------------------------------
+s8aq13b                                                                                    Unit of land rented out
+------------------------------------------------------------------------------------------------------------------
+
+                  Type: Numeric (byte)
+                 Label: S8AQ13B
+
+                 Range: [1,5]                         Units: 1
+         Unique values: 5                         Missing .: 13,934/14,009
+
+            Tabulation: Freq.   Numeric  Label
+                           66         1  Acres
+                            4         2  Poles
+                            2         3  Ropes
+                            2         4  Plot
+                            1         5  Hectares
+                       13,934         .  
+
+. gen rentedout = inlist(s8aq12,1) if !missing(s8aq12)
+(8,165 missing values generated)
+
+. gen rentedout_ha = s8aq13a * 0.404686 if inlist(s8aq13b,1) // Acres to hectares
+(13,943 missing values generated)
+
+. replace rentedout_ha = s8aq13a * 0.044965 if inlist(s8aq13b,2) // Poles to hectares
+(4 real changes made)
+
+. replace rentedout_ha = s8aq13a * 0.044965 if inlist(s8aq13b,3) // Ropes to hectares
+(2 real changes made)
+
+. replace rentedout_ha = s8aq13a * 0.065032 if inlist(s8aq13b,4) // Plot to hectares
+(2 real changes made)
+
+. replace rentedout_ha = s8aq13a * 1.000000 if inlist(s8aq13b,5) // Hectares
+(1 real change made)
+
+. 
+. codebook s8aq15 s8aq16b 
+
+------------------------------------------------------------------------------------------------------------------
+s8aq15                                Was any agricultural land given out for sharecropping in the past 12 months?
+------------------------------------------------------------------------------------------------------------------
+
+                  Type: Numeric (byte)
+                 Label: S8AQ15
+
+                 Range: [1,2]                         Units: 1
+         Unique values: 2                         Missing .: 8,165/14,009
+
+            Tabulation: Freq.   Numeric  Label
+                          218         1  Yes
+                        5,626         2  No
+                        8,165         .  
+
+------------------------------------------------------------------------------------------------------------------
+s8aq16b                                                                                  Unit of land sharecropped
+------------------------------------------------------------------------------------------------------------------
+
+                  Type: Numeric (byte)
+                 Label: S8AQ16B
+
+                 Range: [1,5]                         Units: 1
+         Unique values: 5                         Missing .: 13,791/14,009
+
+            Tabulation: Freq.   Numeric  Label
+                          163         1  Acres
+                           39         2  Poles
+                           12         3  Ropes
+                            3         4  Plot
+                            1         5  Hectares
+                       13,791         .  
+
+. gen sharedout = inlist(s8aq15,1) if !missing(s8aq15)
+(8,165 missing values generated)
+
+. gen sharedout_ha = s8aq16a * 0.404686 if inlist(s8aq16b,1) // Acres to hectares
+(13,846 missing values generated)
+
+. replace sharedout_ha = s8aq16a * 0.044965 if inlist(s8aq16b,2) // Poles to hectares
+(39 real changes made)
+
+. replace sharedout_ha = s8aq16a * 0.044965 if inlist(s8aq16b,3) // Ropes to hectares
+(12 real changes made)
+
+. replace sharedout_ha = s8aq16a * 0.065032 if inlist(s8aq16b,4) // Plot to hectares
+(3 real changes made)
+
+. replace sharedout_ha = s8aq16a * 1.000000 if inlist(s8aq16b,5) // Hectares
+(1 real change made)
+
+. 
+. egen shrentout = rowmax(rentedout sharedout)
+(8,165 missing values generated)
+
+. tabstat rentedout sharedout shrentout [aw=WTA_S]
+
+   Stats |  rented~t  shared~t  shrent~t
+---------+------------------------------
+    Mean |   .014102  .0500551  .0606213
+----------------------------------------
+
+. // rented out 1.3%
+. // shared out 3.7%
+. 
+end of do-file
+
+. 
+. log close master
+      name:  master
+       log:  /Users/jchamberlin/repos/Ghana_land_rental/Ghana_land_rental_exploratory.log
+  log type:  text
+ closed on:   8 Oct 2026, 13:48:37
+------------------------------------------------------------------------------------------------------------------

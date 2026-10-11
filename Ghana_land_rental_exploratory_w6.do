@@ -1,3 +1,5 @@
+/* WAVE 6 */
+
 clear all 
 
 set more off
@@ -8,9 +10,21 @@ ls "/Users/jchamberlin/Library/CloudStorage/OneDrive-CIMMYT/DATA/Ghana/GLSS6_201
 cd "/Users/jchamberlin/Library/CloudStorage/OneDrive-CIMMYT/DATA/Ghana/GLSS6_2012-2013/DATA/STATA/STATA/PARTB"
 use sec8b.dta, clear // cf g7sec8b.dta in wave 7
 
-tab s8bq8
-// 5% plots rented in 
-// 8% plots sharecropped in
+* weights are in PARTA/g6loc_edt.dta
+describe using "/Users/jchamberlin/Library/CloudStorage/OneDrive-CIMMYT/DATA/Ghana/GLSS6_2012-2013/DATA/STATA/STATA/PARTA/g6loc_edt.dta"
+
+clonevar HID=hid
+
+merge m:1 clust HID using "/Users/jchamberlin/Library/CloudStorage/OneDrive-CIMMYT/DATA/Ghana/GLSS6_2012-2013/DATA/STATA/STATA/PARTA/g6loc_edt.dta", keepusing(weight) keep(master match)
+tab _merge             // all should be 3 (matched)
+drop _merge
+
+inspect weight
+
+keep if !missing(s8bq8)   // plots with acquisition info (ag households)
+
+tab s8bq8 [aw=weight]
+
 codebook s8bq8
 
 gen plotacq_bought = inlist(s8bq8,1)
@@ -21,21 +35,26 @@ gen plotacq_vilinh = inlist(s8bq8,5,6)
 *gen plotacq_villag = inlist(s8bq8,5) 
 *gen plotacq_inheri = inlist(s8bq8,6)
 
-stop
-collapse (max) plotacq_* (max) farmnum = s8bq3, by(hid clust)
+collapse (max) plotacq_* (max) farmnum = s8bq3, by(hid clust weight)
 
-tabstat plotacq_*
-// 4% HHs with land rented in 
-// 7% HHs with land sharecropped in 
+tabstat plotacq_* [aw=weight]
 clonevar rentedin = plotacq_rentin
 clonevar sharedin = plotacq_sharin
 egen shrentin = rowmax(rentedin sharedin)
-tabstat rentedin sharedin shrentin  
+tabstat rentedin sharedin shrentin [aw=weight]
 
 
-stop
 
 use sec8a1.dta, clear // cf g7sec8a1.dta in wave 7
+
+* weights are in PARTA/g6loc_edt.dta
+clonevar HID=hid
+
+merge m:1 clust HID using "/Users/jchamberlin/Library/CloudStorage/OneDrive-CIMMYT/DATA/Ghana/GLSS6_2012-2013/DATA/STATA/STATA/PARTA/g6loc_edt.dta", keepusing(weight) keep(master match)
+tab _merge             // all should be 3 (matched)
+drop _merge
+
+inspect weight
 
 d s8aq12 s8aq13a s8aq13b s8aq14 s8aq15 s8aq16a s8aq16b
 codebook s8aq12 s8aq13b 
@@ -54,6 +73,5 @@ replace sharedout_ha = s8aq16a * 0.044965 if inlist(s8aq16b,3) // Ropes to hecta
 replace sharedout_ha = s8aq16a * 0.065032 if inlist(s8aq16b,4) // Plot to hectares
 replace sharedout_ha = s8aq16a * 1.000000 if inlist(s8aq16b,5) // Hectares
 
-tabstat rentedout rentedout_ha sharedout sharedout_ha
-// rented out 1.7%
-// shared out 7.0%
+egen shrentout = rowmax(rentedout sharedout)
+tabstat rentedout sharedout shrentout [aw=weight]
